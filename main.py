@@ -1,8 +1,7 @@
-class Prenda:
-    def __init__(self, nombre, precio, cantidad):
+class Producto:
+    def __init__(self, nombre, precio):
         self._nombre = nombre
         self._precio = precio
-        self._cantidad = cantidad
 
     def get_nombre(self):
         return self._nombre
@@ -10,142 +9,123 @@ class Prenda:
     def get_precio(self):
         return self._precio
 
-    def get_cantidad(self):
-        return self._cantidad
-
-    def set_precio(self, nuevo_precio):
-        if nuevo_precio > 0:
-            self._precio = nuevo_precio
-        else:
-            print("El precio debe ser mayor a 0")
-
     def mostrar_info(self):
         raise NotImplementedError("Este método debe ser sobrescrito en las clases hijas")
 
-class RopaHombre(Prenda):
-    def __init__(self, nombre, precio, cantidad, talla):
-        super().__init__(nombre, precio, cantidad)
+class Ropa(Producto):
+    def __init__(self, nombre, precio, talla, tipo_tela):
+        super().__init__(nombre, precio)
         self._talla = talla
+        self._tipo_tela = tipo_tela
+
+    def get_talla(self):
+        return self._talla
+
+    def get_tipo_tela(self):
+        return self._tipo_tela
 
     def mostrar_info(self):
-        return f"Prenda: {self.get_nombre()}, Precio: {self.get_precio()}, Cantidad: {self.get_cantidad()}, Talla: {self._talla}"
+        return f"{self.get_nombre()} - Precio: {self.get_precio()}, Talla: {self._talla}, Tela: {self._tipo_tela}"
 
-class RopaMujer(Prenda):
-    def __init__(self, nombre, precio, cantidad, talla):
-        super().__init__(nombre, precio, cantidad)
-        self._talla = talla
+class Camisa(Ropa):
+    def __init__(self, nombre, precio, talla, tipo_tela, tipo_cuello):
+        super().__init__(nombre, precio, talla, tipo_tela)
+        self._tipo_cuello = tipo_cuello
 
     def mostrar_info(self):
-        return f"Prenda: {self.get_nombre()}, Precio: {self.get_precio()}, Cantidad: {self.get_cantidad()}, Talla: {self._talla}"
+        return f"Camisa: {self.get_nombre()} - Precio: {self.get_precio()}, Talla: {self._talla}, Tela: {self._tipo_tela}, Cuello: {self._tipo_cuello}"
 
-class Categoria:
-    def __init__(self, nombre):
-        self._nombre = nombre
-        self._prendas = []
+class Pantalon(Ropa):
+    def __init__(self, nombre, precio, talla, tipo_tela, tipo_corte):
+        super().__init__(nombre, precio, talla, tipo_tela)
+        self._tipo_corte = tipo_corte
 
-    def agregar_prenda(self, prenda):
-        self._prendas.append(prenda)
+    def mostrar_info(self):
+        return f"Pantalón: {self.get_nombre()} - Precio: {self.get_precio()}, Talla: {self._talla}, Tela: {self._tipo_tela}, Corte: {self._tipo_corte}"
 
-    def mostrar_prendas(self):
-        print(f"\n--- Categoría: {self._nombre} ---")
-        for idx, prenda in enumerate(self._prendas, start=1):
-            print(f"{idx}. {prenda.mostrar_info()}")
+class Zapato(Ropa):
+    def __init__(self, nombre, precio, talla, tipo_material):
+        super().__init__(nombre, precio, talla, tipo_material)
+        self._tipo_material = tipo_material
 
-    def obtener_prenda(self, indice):
-        if 0 <= indice < len(self._prendas):
-            return self._prendas[indice]
-        return None
+    def mostrar_info(self):
+        return f"Zapato: {self.get_nombre()} - Precio: {self.get_precio()}, Talla: {self._talla}, Material: {self._tipo_material}"
 
-    def get_nombre(self):
-        return self._nombre
+class Carrito:
+    def __init__(self):
+        self._productos = []
+
+    def agregar_producto(self, producto):
+        self._productos.append(producto)
+
+    def mostrar_carrito(self):
+        if not self._productos:
+            print("El carrito está vacío.")
+        else:
+            print("\n--- Carrito de Compras ---")
+            for producto in self._productos:
+                print(producto.mostrar_info())
+
+    def calcular_total(self):
+        return sum(producto.get_precio() for producto in self._productos)
 
 class Tienda:
     def __init__(self):
-        self._categorias = []
-        self._carrito = []
+        self._productos_disponibles = []
+        self._carrito = Carrito()
 
-    def agregar_categoria(self, categoria):
-        self._categorias.append(categoria)
+    def agregar_producto_disponible(self, producto):
+        self._productos_disponibles.append(producto)
 
-    def mostrar_categorias(self):
-        for idx, categoria in enumerate(self._categorias, start=1):
-            print(f"{idx}. {categoria.get_nombre()}")
+    def mostrar_productos_disponibles(self):
+        print("\n--- Productos Disponibles ---")
+        for idx, producto in enumerate(self._productos_disponibles, start=1):
+            print(f"{idx}. {producto.mostrar_info()}")
 
-    def seleccionar_categoria(self, indice):
-        if 0 <= indice < len(self._categorias):
-            return self._categorias[indice]
-        return None
-
-    def agregar_al_carrito(self, prenda):
-        self._carrito.append(prenda)
+    def seleccionar_producto(self, indice):
+        if 0 <= indice < len(self._productos_disponibles):
+            producto = self._productos_disponibles[indice]
+            self._carrito.agregar_producto(producto)
+            print(f"{producto.get_nombre()} ha sido agregado al carrito.")
+        else:
+            print("Selección inválida.")
 
     def mostrar_carrito(self):
-        if not self._carrito:
-            print("El carrito está vacío.")
-        else:
-            for prenda in self._carrito:
-                print(prenda.mostrar_info())
+        self._carrito.mostrar_carrito()
 
     def procesar_compra(self):
-        if not self._carrito:
-            print("El carrito está vacío. No hay nada para comprar.")
-        else:
-            total = sum(prenda.get_precio() for prenda in self._carrito)
-            print(f"El total de la compra es: {total:.2f}")
-            self._carrito.clear()
-            print("Compra procesada. ¡Gracias por su compra!")
+        total = self._carrito.calcular_total()
+        print(f"\nEl total de la compra es: {total:.2f}")
+        print("Compra procesada. ¡Gracias por su compra!")
+        self._carrito = Carrito()
 
 if __name__ == "__main__":
-    ropa_hombre = Categoria("Ropa de Hombre")
-    ropa_mujer = Categoria("Ropa de Mujer")
-
-    ropa_hombre.agregar_prenda(RopaHombre("Camisa de Hombre", 25.00, 50, "M"))
-    ropa_hombre.agregar_prenda(RopaHombre("Pantalón de Hombre", 35.00, 30, "L"))
-    
-    ropa_mujer.agregar_prenda(RopaMujer("Falda de Mujer", 28.00, 15, "S"))
-    ropa_mujer.agregar_prenda(RopaMujer("Zapatos de Mujer", 50.00, 20, "38"))
-
     tienda = Tienda()
-    tienda.agregar_categoria(ropa_hombre)
-    tienda.agregar_categoria(ropa_mujer)
+    tienda.agregar_producto_disponible(Camisa("Camisa Casual", 25.00, "M", "Algodón", "Cuello Redondo"))
+    tienda.agregar_producto_disponible(Pantalon("Pantalón Jeans", 40.00, "L", "Denim", "Slim Fit"))
+    tienda.agregar_producto_disponible(Zapato("Zapatos de Cuero", 60.00, "42", "Cuero"))
 
     while True:
-        print("\n--- Sistema de Compra de Ropa ---")
-        print("1. Ver Categorías")
-        print("2. Agregar Prenda al Carrito")
+        print("\n--- Menú Principal ---")
+        print("1. Ver Productos Disponibles")
+        print("2. Agregar Producto al Carrito")
         print("3. Ver Carrito")
         print("4. Procesar Compra")
         print("5. Salir")
-
         opcion = input("Seleccione una opción: ")
 
         if opcion == "1":
-            print("\n--- Categorías ---")
-            tienda.mostrar_categorias()
+            tienda.mostrar_productos_disponibles()
 
         elif opcion == "2":
-            print("\n--- Selección de Categoría ---")
-            tienda.mostrar_categorias()
-            cat_idx = int(input("Seleccione el número de la categoría: ")) - 1
-            categoria = tienda.seleccionar_categoria(cat_idx)
-            if categoria:
-                categoria.mostrar_prendas()
-                prenda_idx = int(input("Seleccione el número de la prenda para agregar al carrito: ")) - 1
-                prenda = categoria.obtener_prenda(prenda_idx)
-                if prenda:
-                    tienda.agregar_al_carrito(prenda)
-                    print(f"{prenda.get_nombre()} ha sido agregado al carrito.")
-                else:
-                    print("Selección de prenda inválida.")
-            else:
-                print("Selección de categoría inválida.")
+            tienda.mostrar_productos_disponibles()
+            indice = int(input("Seleccione el número del producto que desea agregar al carrito: ")) - 1
+            tienda.seleccionar_producto(indice)
 
         elif opcion == "3":
-            print("\n--- Carrito de Compras ---")
             tienda.mostrar_carrito()
 
         elif opcion == "4":
-            print("\n--- Procesar Compra ---")
             tienda.procesar_compra()
 
         elif opcion == "5":
