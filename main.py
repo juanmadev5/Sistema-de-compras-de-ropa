@@ -104,6 +104,13 @@ if __name__ == "__main__":
     tienda.agregar_producto_disponible(Camisa("Camisa Casual", 25.00, "M", "Algodón", "Cuello Redondo"))
     tienda.agregar_producto_disponible(Pantalon("Pantalón Jeans", 40.00, "L", "Denim", "Slim Fit"))
     tienda.agregar_producto_disponible(Zapato("Zapatos de Cuero", 60.00, "42", "Cuero"))
+    tienda.agregar_producto_disponible(Camisa("Camisa de Rayas", 30.00, "L", "Poliéster", "Cuello Mao"))
+    tienda.agregar_producto_disponible(Camisa("Camisa Formal", 50.00, "S", "Algodón", "Cuello Clásico"))
+    tienda.agregar_producto_disponible(Pantalon("Pantalón Corto", 35.00, "M", "Lino", "Regular Fit"))
+    tienda.agregar_producto_disponible(Pantalon("Pantalón Chino", 45.00, "M", "Algodón", "Regular Fit"))
+    tienda.agregar_producto_disponible(Zapato("Zapatos Deportivos", 55.00, "41", "Sintético"))
+    tienda.agregar_producto_disponible(Zapato("Botas de Invierno", 80.00, "43", "Cuero"))
+    tienda.agregar_producto_disponible(Zapato("Sandalias", 25.00, "40", "Plástico"))
 
     while True:
         print("\n--- Menú Principal ---")
